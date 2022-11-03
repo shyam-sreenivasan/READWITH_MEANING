@@ -8,14 +8,19 @@
             }
 
             td, th {
-            border: 1px solid #dddddd;
+            border: 1px solid #ccc;
             text-align: left;
             padding: 8px;
             }
 
             tr:nth-child(even) {
-            background-color: #dddddd;
+            background-color: #87CEEB;
             }
+
+            tr:nth-child(odd) {
+                background-color: #ADD8E6;
+            }
+
             #meaning {
                 display: none;
                 position: fixed;
@@ -32,6 +37,12 @@
             #read_text {
                 width: 60%;
                 border: 2px solid black;
+                font-family: 'Courier New', Courier, monospace;
+                font-size: large;
+                cursor:pointer;
+            }
+            #meaning_table {
+                width: 40%;
             }
         </style>
         
@@ -58,7 +69,7 @@
        </div>
     </center>
     <div id="meaning">
-        <div id="meaning_table"></div>
+        
     </div>
 
     </body>
@@ -91,7 +102,7 @@
                         <table id='meaning_table' style='border: 2px'>
                             <tr>
                                 <th>Parts of Speech</th>
-                                <th>Meaning <button onclick="hide_meaning()">Close</button></th>
+                                <th>Meaning <button style='float: right;'onclick="hide_meaning()">X</button></th>
                             </tr>
                     `;
                     for (let i=0; i < data['Data'].length; i++) {
@@ -107,7 +118,7 @@
     
                     table += '</table>'
                     let obj = document.getElementById("meaning");
-                    document.getElementById("meaning_table").innerHTML = table;
+                    document.getElementById("meaning").innerHTML = table;
                     obj.style.display = 'block';
                     let read_obj = document.getElementById('read_text');
                     read_obj.style.opacity = 0.2;

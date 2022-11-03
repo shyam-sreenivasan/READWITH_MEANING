@@ -5,9 +5,11 @@
     </head>
     <body>
        <div>
+            <h2>Your Collections</h2>
            <ul id="books">
                 {% for book in context.books %}
                     <a href="/books/{{book}}"><li>{{ book }}</li></a>
+                    <br>
                 {% endfor %}
            </ul> 
        </div>
