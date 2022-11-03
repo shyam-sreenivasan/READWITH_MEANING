@@ -1,0 +1,18 @@
+<html>
+    <head>
+
+        </style>
+    </head>
+    <body>
+       <div>
+           <ul id="books">
+                {% for book in context.books %}
+                    <a href="/books/{{book}}"><li>{{ book }}</li></a>
+                {% endfor %}
+           </ul> 
+       </div>
+    </body>
+    <script>
+
+    </script>
+</html>

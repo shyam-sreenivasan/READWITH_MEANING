@@ -1,0 +1,120 @@
+<html>
+    <head>
+        <style>
+            table {
+            font-family: arial, sans-serif;
+            border-collapse: collapse;
+            width: 30%;
+            }
+
+            td, th {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+            }
+
+            tr:nth-child(even) {
+            background-color: #dddddd;
+            }
+            #meaning {
+                display: none;
+                position: fixed;
+                z-index: 999;
+                left: 40%;
+                top: 10%;
+            }
+            #pagenum {
+                display: none;
+            }
+            #bookname {
+                display: none; 
+            }
+            #read_text {
+                width: 60%;
+                border: 2px solid black;
+            }
+        </style>
+        
+    </head>
+    <body>
+        <p id="bookname"> {{ context.bookname }}</p>
+        <center>
+       <div>
+        <p id="read_text">
+            {% for line in context.text %}
+            {% for word in line %}
+                <span class="{{ word }}" onclick="get_meaning('{{ word }}')">{{word}}</span>
+            {%endfor%}
+            <br>
+            {% endfor%}    
+        </p>
+        <p id="pagenum"> {{ context.pagenum }}</p>
+        <table>
+            <tr>
+                <th style="text-align: center;"><button onclick="load_content(-1)">Prev</button></th>
+                <th style="text-align: center;"><button onclick="load_content(1)">Next</button></th>
+            </tr>
+        </table>
+       </div>
+    </center>
+    <div id="meaning">
+        <div id="meaning_table"></div>
+    </div>
+
+    </body>
+    <script>
+        let page = 0
+        function hide_meaning() {
+            let obj = document.getElementById('meaning');
+            let read_obj = document.getElementById('read_text');
+            obj.style.display = 'none';
+            read_obj.style.opacity = 1;
+        }
+
+        function load_content(direction) {
+            book_name = document.getElementById('bookname');
+            page = document.getElementById('pagenum');
+            window.location.href = "/books/"+ book_name.innerHTML.trim()+"?page="+String((parseInt(page.innerHTML.trim())+parseInt(direction)));
+        }
+
+        function get_meaning(word) {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    data = JSON.parse(this.responseText);
+                    console.log(data);
+                    if (data['Status'] == 'Error') {
+                        alert(data['Msg']);
+                        return;
+                    }
+                    table = `
+                        <table id='meaning_table' style='border: 2px'>
+                            <tr>
+                                <th>Parts of Speech</th>
+                                <th>Meaning <button onclick="hide_meaning()">Close</button></th>
+                            </tr>
+                    `;
+                    for (let i=0; i < data['Data'].length; i++) {
+                        let row = ''
+                        row += `
+                            <tr>
+                                <td>` + data['Data'][i]['POS'] + `</td>
+                                <td>` + data['Data'][i]['meaning'] + `</td>
+                            </tr>
+                        `;
+                        table += row
+                    }
+    
+                    table += '</table>'
+                    let obj = document.getElementById("meaning");
+                    document.getElementById("meaning_table").innerHTML = table;
+                    obj.style.display = 'block';
+                    let read_obj = document.getElementById('read_text');
+                    read_obj.style.opacity = 0.2;
+                }
+            };
+            xhttp.open("GET", "/meaning/"+word, true);
+            xhttp.send();
+        }
+    </script>
+</html>

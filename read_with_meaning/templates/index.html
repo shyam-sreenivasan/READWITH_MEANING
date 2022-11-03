@@ -1,0 +1,76 @@
+<html>
+    <head>
+        <style>
+            table {
+            font-family: arial, sans-serif;
+            border-collapse: collapse;
+            width: 50%;
+            }
+
+            td, th {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+            }
+
+            tr:nth-child(even) {
+            background-color: #dddddd;
+            }
+            #meaning {
+                display: none;
+                position: absolute;
+            }
+        </style>
+    </head>
+    <body>
+        <p id="read_text">
+            {% for word in context.text %}
+                <span class="{{ word }}" onclick="get_meaning('{{ word }}')">{{word}}</span>
+            {% endfor%}    
+        </p>
+        
+        <div id="meaning">
+            <button onclick="hide_meaning()">Close</button>
+            <div id="meaning_table"></div>
+        </div>
+    </body>
+    <script>
+
+        function hide_meaning() {
+            let obj = document.getElementById('meaning')
+            obj.style.display = 'none';
+        }
+        function get_meaning(word) {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    data = JSON.parse(this.responseText);
+                    table = `
+                        <table id='meaning_table' style='border: 2px'>
+                            <tr>
+                                <th>Parts of Speech</th>
+                                <th>Meaning</th>
+                            </tr>
+                    `;
+                    for (let i=0; i < data['Data'].length; i++) {
+                        let row = ''
+                        row += `
+                            <tr>
+                                <td>` + data['Data'][i]['POS'] + `</td>
+                                <td>` + data['Data'][i]['meaning'] + `</td>
+                            </tr>
+                        `;
+                        table += row
+                    }
+    
+                    table += '</table>'
+                    let obj = document.getElementById("meaning");
+                    document.getElementById("meaning_table").innerHTML = table;
+                    obj.style.display = 'block';
+                }
+            };
+            xhttp.open("GET", "/meaning/"+word, true);
+            xhttp.send();
+        }
+    </script>
+</html>
