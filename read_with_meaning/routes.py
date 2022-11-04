@@ -5,10 +5,6 @@ import os
 from flask import render_template, request
 
 @app.route('/', methods=['GET'])
-def home():
-    text = "This is a sample text"
-    return render_template('index.html', context={"text": text.split()})
-
 @app.route('/books', methods=['GET'])
 def books():
     from read_with_meaning import books_path
