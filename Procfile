@@ -1,1 +1,1 @@
-web: gunicorn main:read_with_meaning
+web: gunicorn main:app
