@@ -5,6 +5,9 @@ import os
 from flask import render_template, request
 
 @app.route('/', methods=['GET'])
+def home():
+    return render_template('upload_book.html')
+
 @app.route('/books', methods=['GET'])
 def books():
     from read_with_meaning import books_path
@@ -14,6 +17,22 @@ def books():
     for root, subdirs, files in os.walk(books_path):
         books.extend(files)
     return render_template('books.html', context={"books": books})
+
+@app.route('/book', methods=['POST'])
+def upload_book():
+    from read_with_meaning import books_path
+    try:
+        files = request.files
+        print(files)
+        if "uploadedfile" not in files:
+            return {"Status": "Error", "Msg": "Invalid file input key"}
+        file = files["uploadedfile"]
+        print(vars(files))
+        file.save(f"{books_path}/{file.filename}")
+    except Exception as e:
+        print(f"Exception {e}")
+        return {"Status": "Error", "Msg": "Unable to upload file"}
+    return book_data(file.filename)
 
 @app.route('/books/<name>', methods=['GET'])
 def book_data(name):
